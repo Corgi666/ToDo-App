@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:todoapp/constants/app_color.dart';
+import 'package:todoapp/controller/todo_controller.dart';
 import 'package:todoapp/model/ToDo.dart';
 import 'package:todoapp/widgets/todo_item.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
 
   @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  @override
   Widget build(BuildContext context) {
+    var _controller = TextEditingController();
+    ToDoController toDoController = Get.find();
+    dispose() {
+      _controller.dispose();
+      super.dispose();
+    }
+
+    // final todo = ''.obs;
     return Scaffold(
       backgroundColor: AppColor.tdBGColor,
       appBar: AppBar(
@@ -34,7 +49,49 @@ class Home extends StatelessWidget {
         centerTitle: true,
         backgroundColor: AppColor.tdBGColor,
       ),
-      body: bodyPage(),
+      body: Stack(
+        children: [
+          bodyPage(),
+          Positioned(
+              bottom: 20,
+              left: 20,
+              right: 20,
+              child: Container(
+                  height: 100,
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          onChanged: (value) {
+                            // todo.value = value;
+                          },
+                          controller: _controller,
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5))),
+                        ),
+                      ),
+                      Container(
+                          margin: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                              color: Colors.blue,
+                              border: Border.all(color: AppColor.tdBlue),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: IconButton(
+                              onPressed: () {
+                                final id = 7.obs;
+                                toDoController.addData(
+                                    id: id.value.toString(),
+                                    todoText: _controller.text);
+
+                                id.value++;
+                              },
+                              icon: Icon(Icons.add)))
+                    ],
+                  )))
+        ],
+      ),
     );
   }
 }
@@ -47,7 +104,14 @@ class bodyPage extends StatefulWidget {
 }
 
 class _bodyPageState extends State<bodyPage> {
-  final todosList = ToDo.totoList();
+  final todosList = Get.find<ToDoController>().todoList;
+
+  void handleToDoChange(ToDo todo) {
+    setState(() {
+      todo.isDone = !todo.isDone;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -56,7 +120,8 @@ class _bodyPageState extends State<bodyPage> {
           children: [
             Search(),
             Expanded(
-              child: ListView(
+                child: Obx(
+              () => ListView(
                 children: [
                   Container(
                     margin: EdgeInsets.only(top: 50, bottom: 50),
@@ -66,11 +131,10 @@ class _bodyPageState extends State<bodyPage> {
                           TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
                     ),
                   ),
-                  for(ToDo todo in todosList)
-                  ToDoItem(todo: todo)
+                  for (ToDo todo in todosList) ToDoItem(todo: todo)
                 ],
               ),
-            )
+            ))
           ],
         ));
   }
