@@ -45,7 +45,7 @@ class ToDoItem extends StatelessWidget {
           ),
           child: IconButton(
             onPressed: () {
-              controller.deleteData(id);
+              controller.deleteData(todo.id.toString());
             },
             icon: Icon(
               Icons.delete,
