@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:get/get.dart';
+import 'package:todoapp/controller/todo_controller.dart';
 
 import '../constants/app_color.dart';
 import '../model/ToDo.dart';
@@ -11,7 +13,9 @@ class ToDoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(margin: EdgeInsets.only(bottom: 20),
+    ToDoController controller = Get.find();
+    return Container(
+      margin: EdgeInsets.only(bottom: 20),
       child: ListTile(
         onTap: () {},
         shape: RoundedRectangleBorder(
@@ -19,8 +23,8 @@ class ToDoItem extends StatelessWidget {
         ),
         tileColor: Colors.white,
         contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-        leading: Icon(todo.isDone?
-          Icons.check_box:Icons.check_box_outline_blank,
+        leading: Icon(
+          todo.isDone ? Icons.check_box : Icons.check_box_outline_blank,
           color: AppColor.tdBlue,
         ),
         title: Text(
@@ -28,7 +32,7 @@ class ToDoItem extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             color: AppColor.tdBlack,
-            decoration: todo.isDone? TextDecoration.lineThrough:null,
+            decoration: todo.isDone ? TextDecoration.lineThrough : null,
           ),
         ),
         trailing: Container(
@@ -40,7 +44,9 @@ class ToDoItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(5),
           ),
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              controller.deleteData(id);
+            },
             icon: Icon(
               Icons.delete,
               size: 18,
